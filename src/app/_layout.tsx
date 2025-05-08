@@ -7,10 +7,10 @@ import {
 } from "@expo-google-fonts/inter";
 import { Stack } from "expo-router";
 import { useState } from "react";
+import { useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Drawer } from 'expo-router/drawer';
-import { useColorScheme } from 'react-native';
-import { useBoardConnection } from '../presentation/hooks/useBoardConnection';
+
+import { useBoardConnection } from "../presentation/hooks/useBoardConnection";
 
 import SplashScreen from "@/components/core/splash";
 import { Loading } from "@/components/loading";
@@ -26,8 +26,8 @@ export default function RootLayout() {
     Inter_400Regular,
     Inter_600SemiBold,
   });
-  const colorScheme = useColorScheme();
-  useBoardConnection(); // Initialize board connection at app root
+
+  useBoardConnection();
 
   if (!isAppReady) {
     return <SplashScreen onFinish={() => setIsAppReady(true)} />;
@@ -39,41 +39,10 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Drawer
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: colorScheme === 'dark' ? '#1F2937' : '#FFFFFF',
-          },
-          headerTintColor: colorScheme === 'dark' ? '#FFFFFF' : '#1F2937',
-          drawerStyle: {
-            backgroundColor: colorScheme === 'dark' ? '#1F2937' : '#FFFFFF',
-          },
-          drawerActiveTintColor: '#60A5FA',
-          drawerInactiveTintColor: colorScheme === 'dark' ? '#9CA3AF' : '#4B5563',
-        }}
-      >
-        <Drawer.Screen
-          name="index"
-          options={{
-            title: 'IDE',
-            drawerLabel: 'IDE',
-          }}
-        />
-        <Drawer.Screen
-          name="(drawer)/files"
-          options={{
-            title: 'Files',
-            drawerLabel: 'Files',
-          }}
-        />
-        <Drawer.Screen
-          name="(drawer)/settings"
-          options={{
-            title: 'Settings',
-            drawerLabel: 'Settings',
-          }}
-        />
-      </Drawer>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(drawer)" />
+        <Stack.Screen name="modal" />
+      </Stack>
     </GestureHandlerRootView>
   );
 }

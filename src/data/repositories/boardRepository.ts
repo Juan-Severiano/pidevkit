@@ -1,6 +1,7 @@
-import { board } from 'expo-micro-ide';
-import { BoardStatus, ConnectionStatus } from '../../domain/entities/types';
-import { BoardUseCases } from '../../domain/useCases/boardUseCases';
+import { board } from "expo-micro-ide";
+
+import { BoardStatus, ConnectionStatus } from "../../domain/entities/types";
+import { BoardUseCases } from "../../domain/useCases/boardUseCases";
 
 export class BoardRepository implements BoardUseCases {
   async initialize(): Promise<string> {
@@ -59,6 +60,6 @@ export class BoardRepository implements BoardUseCases {
     if (error?.code) {
       return error;
     }
-    return new Error(error.message || 'Unknown error occurred');
+    return new Error(error.message || "Unknown error occurred");
   }
-} 
+}

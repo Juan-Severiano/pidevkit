@@ -1,35 +1,36 @@
-import { files } from 'expo-micro-ide';
-import { MicroFile } from '../../domain/entities/types';
-import { FileSystemUseCases } from '../../domain/useCases/fileSystemUseCases';
+import { files } from "expo-micro-ide";
+
+import { MicroFile } from "../../domain/entities/types";
+import { FileSystemUseCases } from "../../domain/useCases/fileSystemUseCases";
 
 export class FileSystemRepository implements FileSystemUseCases {
-  async list(path?: string): Promise<MicroFile[]> {
+  async list(): Promise<MicroFile[]> {
     try {
-      return await files.list(path);
+      return await files.list();
     } catch (error) {
       throw this.handleError(error);
     }
   }
 
-  async create(name: string, path?: string): Promise<string> {
+  async create(name: string): Promise<string> {
     try {
-      return await files.create(name, path);
+      return await files.create(name);
     } catch (error) {
       throw this.handleError(error);
     }
   }
 
-  async remove(fileName: string, path?: string): Promise<string> {
+  async remove(fileName: string): Promise<string> {
     try {
-      return await files.remove(fileName, path);
+      return await files.remove(fileName);
     } catch (error) {
       throw this.handleError(error);
     }
   }
 
-  async rename(oldName: string, newName: string, path?: string): Promise<string> {
+  async rename(oldName: string, newName: string): Promise<string> {
     try {
-      return await files.rename(oldName, newName, path);
+      return await files.rename(oldName, newName);
     } catch (error) {
       throw this.handleError(error);
     }
@@ -37,6 +38,7 @@ export class FileSystemRepository implements FileSystemUseCases {
 
   async read(path: string): Promise<string> {
     try {
+      console.log("path aqui dentro de read", path);
       return await files.read(path);
     } catch (error) {
       throw this.handleError(error);
@@ -52,9 +54,10 @@ export class FileSystemRepository implements FileSystemUseCases {
   }
 
   private handleError(error: any): Error {
+    console.log(error);
     if (error?.code) {
       return error;
     }
-    return new Error(error.message || 'Unknown error occurred');
+    return new Error(error.message || "Unknown error occurred");
   }
-} 
+}

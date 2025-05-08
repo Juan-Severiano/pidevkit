@@ -1,6 +1,8 @@
-import { create } from 'zustand';
-import { MicroFile } from '../../domain/entities/types';
-import { FileSystemRepository } from '../../data/repositories/fileSystemRepository';
+import { create } from "zustand";
+
+import { MicroFile } from "../../domain/entities/types";
+
+import { FileSystemRepository } from "@/data/repositories/fileSystemRepository";
 
 interface FileSystemState {
   files: MicroFile[];
@@ -12,7 +14,11 @@ interface FileSystemState {
   listFiles: (path?: string) => Promise<void>;
   createFile: (name: string, path?: string) => Promise<void>;
   removeFile: (fileName: string, path?: string) => Promise<void>;
-  renameFile: (oldName: string, newName: string, path?: string) => Promise<void>;
+  renameFile: (
+    oldName: string,
+    newName: string,
+    path?: string,
+  ) => Promise<void>;
   readFile: (path: string) => Promise<void>;
   writeFile: (path: string, content: string) => Promise<void>;
   setSelectedFile: (file: MicroFile | null) => void;
@@ -20,24 +26,25 @@ interface FileSystemState {
 
 export const useFileSystemStore = create<FileSystemState>((set, get) => ({
   files: [],
-  currentPath: '/',
+  currentPath: "/",
   selectedFile: null,
-  fileContent: '',
+  fileContent: "",
   error: null,
   fileSystem: new FileSystemRepository(),
 
-  listFiles: async (path?: string) => {
+  listFiles: async () => {
     try {
-      const files = await get().fileSystem.list(path);
-      set({ files, currentPath: path || '/', error: null });
+      const result = await get().fileSystem.list();
+      console.log(result);
+      set({ files: result, currentPath: "/", error: null });
     } catch (error: any) {
       set({ error: error.message });
     }
   },
 
-  createFile: async (name: string, path?: string) => {
+  createFile: async (name: string) => {
     try {
-      await get().fileSystem.create(name, path);
+      await get().fileSystem.create(name);
       await get().listFiles(get().currentPath);
       set({ error: null });
     } catch (error: any) {
@@ -45,9 +52,9 @@ export const useFileSystemStore = create<FileSystemState>((set, get) => ({
     }
   },
 
-  removeFile: async (fileName: string, path?: string) => {
+  removeFile: async (fileName: string) => {
     try {
-      await get().fileSystem.remove(fileName, path);
+      await get().fileSystem.remove(fileName);
       await get().listFiles(get().currentPath);
       set({ error: null });
     } catch (error: any) {
@@ -55,9 +62,9 @@ export const useFileSystemStore = create<FileSystemState>((set, get) => ({
     }
   },
 
-  renameFile: async (oldName: string, newName: string, path?: string) => {
+  renameFile: async (oldName: string, newName: string) => {
     try {
-      await get().fileSystem.rename(oldName, newName, path);
+      await get().fileSystem.rename(oldName, newName);
       await get().listFiles(get().currentPath);
       set({ error: null });
     } catch (error: any) {
@@ -68,8 +75,10 @@ export const useFileSystemStore = create<FileSystemState>((set, get) => ({
   readFile: async (path: string) => {
     try {
       const content = await get().fileSystem.read(path);
+      console.log("content", content);
       set({ fileContent: content, error: null });
     } catch (error: any) {
+      console.log(error);
       set({ error: error.message });
     }
   },
@@ -86,4 +95,4 @@ export const useFileSystemStore = create<FileSystemState>((set, get) => ({
   setSelectedFile: (file: MicroFile | null) => {
     set({ selectedFile: file });
   },
-})); 
+}));

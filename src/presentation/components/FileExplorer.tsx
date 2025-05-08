@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { useFileSystemStore } from '../store/fileSystemStore';
-import { FileType, MicroFile } from '../../domain/entities/types';
-import { Folder, File, ChevronLeft } from 'lucide-react-native';
+import { Folder, File, ChevronLeft } from "lucide-react-native";
+import React, { useEffect } from "react";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+
+import { FileType, MicroFile } from "../../domain/entities/types";
+import { useFileSystemStore } from "../store/fileSystemStore";
 
 export const FileExplorer: React.FC = () => {
   const {
@@ -15,20 +16,20 @@ export const FileExplorer: React.FC = () => {
   } = useFileSystemStore();
 
   useEffect(() => {
-    listFiles(currentPath);
-  }, [currentPath]);
+    listFiles();
+  }, []);
 
   const handleFilePress = (file: MicroFile) => {
     if (file.type === FileType.DIRECTORY) {
-      listFiles(file.path);
+      listFiles();
     } else {
       setSelectedFile(file);
     }
   };
 
   const handleBackPress = () => {
-    if (currentPath === '/') return;
-    const parentPath = currentPath.split('/').slice(0, -1).join('/') || '/';
+    if (currentPath === "/") return;
+    const parentPath = currentPath.split("/").slice(0, -1).join("/") || "/";
     listFiles(parentPath);
   };
 
@@ -45,12 +46,12 @@ export const FileExplorer: React.FC = () => {
       <View className="flex-row items-center p-4 bg-white border-b border-gray-200">
         <TouchableOpacity
           onPress={handleBackPress}
-          disabled={currentPath === '/'}
+          disabled={currentPath === "/"}
           className="mr-2"
         >
           <ChevronLeft
             size={24}
-            color={currentPath === '/' ? '#9CA3AF' : '#374151'}
+            color={currentPath === "/" ? "#9CA3AF" : "#374151"}
           />
         </TouchableOpacity>
         <Text className="text-gray-700 font-medium">{currentPath}</Text>
@@ -62,7 +63,7 @@ export const FileExplorer: React.FC = () => {
             key={file.path}
             onPress={() => handleFilePress(file)}
             className={`flex-row items-center p-4 border-b border-gray-200 ${
-              selectedFile?.path === file.path ? 'bg-blue-50' : 'bg-white'
+              selectedFile?.path === file.path ? "bg-blue-50" : "bg-white"
             }`}
           >
             {file.type === FileType.DIRECTORY ? (
@@ -83,4 +84,4 @@ export const FileExplorer: React.FC = () => {
       </ScrollView>
     </View>
   );
-}; 
+};

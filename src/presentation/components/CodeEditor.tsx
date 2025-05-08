@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import CodeEditor from '@rivascva/react-native-code-editor';
-import { useFileSystemStore } from '../store/fileSystemStore';
-import { useBoardStore } from '../store/boardStore';
-import { Play, Pause, RotateCcw, Save } from 'lucide-react-native';
-import { BoardStatus } from '../../domain/entities/types';
+import CodeEditor from "@rivascva/react-native-code-editor";
+import { files as appFiles } from "expo-micro-ide";
+import { Play, Pause, RotateCcw, Save } from "lucide-react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+
+import { BoardStatus } from "../../domain/entities/types";
+import { useBoardStore } from "../store/boardStore";
+import { useFileSystemStore } from "../store/fileSystemStore";
 
 export const Editor: React.FC = () => {
   const {
@@ -13,7 +15,18 @@ export const Editor: React.FC = () => {
     readFile,
     writeFile,
     error: fileError,
+    currentPath,
+    listFiles,
+    files,
   } = useFileSystemStore();
+
+  useEffect(() => {
+    const fetch = async () => {
+      await listFiles();
+      console.log(files);
+    };
+    fetch();
+  }, []);
 
   const {
     status,
@@ -24,13 +37,23 @@ export const Editor: React.FC = () => {
     resetBoard,
   } = useBoardStore();
 
-  const [content, setContent] = useState('');
-  const [output, setOutput] = useState('');
+  const [content, setContent] = useState("");
+  const [output, setOutput] = useState("");
 
   useEffect(() => {
-    if (selectedFile) {
-      readFile(selectedFile.path);
-    }
+    const update = async () => {
+      if (selectedFile) {
+        try {
+          console.log(selectedFile);
+          console.log(`${currentPath}${selectedFile.name}`);
+          const content = await appFiles.read(selectedFile.name);
+          console.log(content);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    };
+    update();
   }, [selectedFile]);
 
   useEffect(() => {
@@ -85,14 +108,20 @@ export const Editor: React.FC = () => {
             disabled={status === BoardStatus.RUNNING}
             className="p-2 bg-gray-100 rounded-md"
           >
-            <Play size={20} color={status === BoardStatus.RUNNING ? '#9CA3AF' : '#374151'} />
+            <Play
+              size={20}
+              color={status === BoardStatus.RUNNING ? "#9CA3AF" : "#374151"}
+            />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={pauseScript}
             disabled={status !== BoardStatus.RUNNING}
             className="p-2 bg-gray-100 rounded-md"
           >
-            <Pause size={20} color={status !== BoardStatus.RUNNING ? '#9CA3AF' : '#374151'} />
+            <Pause
+              size={20}
+              color={status !== BoardStatus.RUNNING ? "#9CA3AF" : "#374151"}
+            />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={resetBoard}
@@ -105,18 +134,11 @@ export const Editor: React.FC = () => {
 
       <View className="flex-1">
         <CodeEditor
-          style={{ flex: 1 }}
           language="python"
           showLineNumbers
-          value={content}
+          initialValue={selectedFile.name}
           onChange={setContent}
-          theme={{
-            background: '#FFFFFF',
-            activeLineBackground: '#F3F4F6',
-            text: '#1F2937',
-            selection: '#60A5FA',
-            selectionBackground: '#DBEAFE',
-          }}
+          style={{}}
         />
       </View>
 
@@ -127,4 +149,4 @@ export const Editor: React.FC = () => {
       )}
     </View>
   );
-}; 
+};

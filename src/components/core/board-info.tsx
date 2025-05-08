@@ -1,67 +1,96 @@
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { CircleX, PlugZap } from "lucide-react-native";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 
 import { Action } from "../action";
 import { Divider } from "../divider";
 
 import { ThemedText } from "@/components/theme/text";
 import { ThemedView } from "@/components/theme/view";
-import { useBitStore } from "@/storage/bit-storage";
+import { ConnectionStatus } from "@/domain/entities/types";
+import { useBoardConnection } from "@/presentation/hooks/useBoardConnection";
+import { useBoardStore } from "@/presentation/store/boardStore";
+import { useFileSystemStore } from "@/presentation/store/fileSystemStore";
 import { colors } from "@/styles/colors";
 
 export function BoardInfo() {
-  const { status, setStatus } = useBitStore();
+  const { board, connectionStatus } = useBoardStore();
 
-  function connect() {
-    setTimeout(() => {
-      setStatus("connecting");
-      setTimeout(() => {
-        setStatus("loading");
-        setTimeout(() => {
-          setStatus("connected");
-        }, 1000);
-      }, 1000);
-    }, 1000);
-  }
+  useBoardConnection();
 
-  function disconnect() {
-    setTimeout(() => {
-      setStatus("loading");
-      setTimeout(() => {
-        setStatus("unconnected");
-      }, 1000);
-    }, 1000);
-  }
+  const { listFiles, files } = useFileSystemStore();
 
-  function reset() {}
+  const isConnectedStatus = connectionStatus === ConnectionStatus.CONNECTED;
+  const isUnconnectedStatus =
+    connectionStatus === ConnectionStatus.DISCONNECTED;
 
-  function close() {}
+  const connect = async () => {
+    try {
+      await board.initialize();
+      await listFiles();
+      console.log(files);
+    } catch (e) {
+      console.error("Erro ao conectar:", e);
+    }
+  };
+
+  const disconnect = async () => {
+    try {
+      // await board.disconnect?.(); // Verifique se o método existe
+    } catch (e) {
+      console.error("Erro ao desconectar:", e);
+    }
+  };
+
+  const reset = async () => {
+    try {
+      await board.reset();
+    } catch (e) {
+      console.error("Erro ao resetar:", e);
+    }
+  };
+
+  const close = async () => {
+    try {
+      await board.pause();
+    } catch (e) {
+      console.error("Erro ao encerrar execução:", e);
+    }
+  };
+
+  const renderStatusInfo = () => {
+    switch (connectionStatus) {
+      case ConnectionStatus.CONNECTED:
+        return "MicroPython - Board in FS Mode";
+      case ConnectionStatus.DISCONNECTED:
+        return "Desconectado";
+      case ConnectionStatus.CONNECTING:
+        return "Conectando ao serviço ...";
+      case ConnectionStatus.ERROR:
+        return "Erro";
+      default:
+        return "";
+    }
+  };
 
   return (
     <ThemedView
       className="border border-3 border-gray-400 rounded-lg px-0 pt-6 pb-2"
       bg="900"
     >
-      <View className="px-4 mb-6">
-        <View className="flex-row justify-between">
-          <ThemedText fontWeight="semibold">
-            {status === "connected" && " MicroPython - Board in FS Mode"}
-            {status === "unconnected" && "Desconectado"}
-            {status === "connecting" && "Conectando ao serviço ..."}
-            {status === "loading" && "Carregando ..."}
-          </ThemedText>
-          {status === "connected" && (
+      <TouchableOpacity className="px-4 mb-6" onPress={connect}>
+        <View className="flex-row justify-between items-center">
+          <ThemedText fontWeight="semibold">{renderStatusInfo()}</ThemedText>
+          {isConnectedStatus ? (
             <FontAwesome name="circle" size={20} color={colors.green[500]} />
-          )}
-          {status !== "connected" && status !== "unconnected" && (
+          ) : isUnconnectedStatus ? (
+            <CircleX size={20} color={colors.red[600]} />
+          ) : (
             <ActivityIndicator color={colors.sky[500]} />
           )}
-          {status === "unconnected" && (
-            <CircleX size={20} color={colors.red[600]} />
-          )}
         </View>
-        {status === "connected" && (
+
+        {isConnectedStatus && (
           <>
             <ThemedText>VendorID - 11912</ThemedText>
             <ThemedText>ProductID - 5</ThemedText>
@@ -70,17 +99,18 @@ export function BoardInfo() {
             </ThemedText>
           </>
         )}
-      </View>
+      </TouchableOpacity>
+
       <Divider />
-      {status !== "connected" && (
+
+      {!isConnectedStatus ? (
         <View className="px-4">
-          <Action disabled={status !== "unconnected"} action={connect}>
+          <Action action={connect}>
             <PlugZap size={20} color={colors.gray[100]} />
             <Action.Title>Conectar Placa</Action.Title>
           </Action>
         </View>
-      )}
-      {status === "connected" && (
+      ) : (
         <>
           <View className="px-4">
             <Action action={disconnect}>

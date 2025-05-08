@@ -2,8 +2,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { DrawerContentComponentProps } from "@react-navigation/drawer";
 import { Drawer } from "expo-router/drawer";
 import {
-  File,
-  FilePlus,
   FilePlus2,
   Folder,
   FolderOpen,
@@ -25,32 +23,15 @@ import { Divider } from "@/components/divider";
 import { ThemedText } from "@/components/theme/text";
 import { ThemedView } from "@/components/theme/view";
 import { IconButton } from "@/components/ui/icon-button";
+import { MicroFile } from "@/domain/entities/types";
 import { iconMap } from "@/lib/svg-loader";
+import { useFileSystemStore } from "@/presentation/store/fileSystemStore";
 import { colors } from "@/styles/colors";
-
-const files = [
-  // { name: "lib", icon: "folder", folder: true },
-  {
-    name: "main.py",
-    icon: "py",
-    folder: false,
-  },
-  { name: "index.html", icon: "html", folder: false },
-  { name: "styles.css", icon: "css", folder: false },
-  { name: "script.js", icon: "js", folder: false },
-  { name: "server.ts", icon: "ts", folder: false },
-] as File[];
-
-export interface File {
-  name: string;
-  icon: keyof typeof iconMap;
-  folder?: boolean;
-}
 
 const options = [
   { name: "Área de Trabalho", icon: "desktop-outline", route: "index" },
   { name: "Editor", icon: "code-outline", route: "editor/[file]" },
-  // { name: "Preferências", icon: "settings-outline", route: "preferences" },
+  { name: "Preferências", icon: "settings-outline", route: "settings" },
 ] as Options[];
 
 interface Options {
@@ -62,19 +43,22 @@ interface Options {
 function CustomDrawerContent({ navigation }: DrawerContentComponentProps) {
   const [activeTab, setActiveTab] = useState("files");
 
+  const { files } = useFileSystemStore();
+
   // @ts-ignore
-  const renderFileItem = (file: File) => (
+  const renderFileItem = (file: MicroFile) => (
     <TouchableOpacity
       key={file.name}
       className="flex-row items-center py-2 px-4"
       onPress={() =>
         navigation.navigate("editor/[file]", {
           file: file.name,
-          icon: file.icon,
+          icon: file.name.split(".")[1],
         })
       }
     >
-      <Image source={iconMap[file.icon]} width={14} height={14} />
+      {/* @ts-ignore */}
+      <Image source={iconMap[file.name.split(".")[1]]} width={14} height={14} />
       <ThemedText variant="body" fontWeight="semibold" className="ml-3">
         {file.name}
       </ThemedText>

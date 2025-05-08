@@ -1,6 +1,7 @@
-import { create } from 'zustand';
-import { BoardStatus, ConnectionStatus } from '../../domain/entities/types';
-import { BoardRepository } from '../../data/repositories/boardRepository';
+import { create } from "zustand";
+
+import { BoardRepository } from "../../data/repositories/boardRepository";
+import { BoardStatus, ConnectionStatus } from "../../domain/entities/types";
 
 interface BoardState {
   status: BoardStatus;
@@ -17,7 +18,7 @@ interface BoardState {
 export const useBoardStore = create<BoardState>((set, get) => ({
   status: BoardStatus.STOPPED,
   connectionStatus: ConnectionStatus.DISCONNECTED,
-  lastOutput: '',
+  lastOutput: "",
   error: null,
   board: new BoardRepository(),
 
@@ -25,15 +26,15 @@ export const useBoardStore = create<BoardState>((set, get) => ({
     try {
       const board = get().board;
       await board.initialize();
-      
+
       board.onStatusChange((status) => {
         set({ status });
       });
-      
+
       board.onConnectionChange((connectionStatus) => {
         set({ connectionStatus });
       });
-      
+
       set({ error: null });
     } catch (error: any) {
       set({ error: error.message });
@@ -69,4 +70,4 @@ export const useBoardStore = create<BoardState>((set, get) => ({
       set({ error: error.message });
     }
   },
-})); 
+}));

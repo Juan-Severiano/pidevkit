@@ -19,6 +19,7 @@ import { ThemedText } from "@/components/theme/text";
 import { ThemedView } from "@/components/theme/view";
 import { IconButton } from "@/components/ui/icon-button";
 import { iconMap, language } from "@/lib/svg-loader";
+import { useFileSystemStore } from "@/presentation/store/fileSystemStore";
 import { colors } from "@/styles/colors";
 
 export default function EditorScreen() {
@@ -30,6 +31,12 @@ export default function EditorScreen() {
   const undoStack = useRef<string[]>([]);
   const redoStack = useRef<string[]>([]);
   const inputSelection = useRef({ start: 0, end: 0 });
+
+  const { readFile } = useFileSystemStore();
+
+  useEffect(() => {
+    readFile(file as string);
+  }, []);
 
   navigation.setOptions({
     headerTitle: () => (
