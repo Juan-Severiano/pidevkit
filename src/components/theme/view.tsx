@@ -11,7 +11,7 @@ export function ThemedView({
   ...rest
 }: ThemedViewProps) {
   return (
-    <View className={`p-6 bg-sky-${bg} ` + className} {...rest}>
+    <View className={`p-6 bg-black ` + className} {...rest}>
       {children}
     </View>
   );

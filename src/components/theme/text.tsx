@@ -17,7 +17,7 @@ export function ThemedText({
   return (
     <Text
       className={cn(
-        "font-normal text-gray-400",
+        "font-normal text-white",
         variant === "title" && "text-4xl font-bold uppercase",
         variant === "body" && "font-bold",
         variant === "subtitle" && "text-2xl font-semibold",

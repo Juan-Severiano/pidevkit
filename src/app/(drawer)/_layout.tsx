@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { DrawerContentComponentProps } from "@react-navigation/drawer";
 import { Drawer } from "expo-router/drawer";
+import { BlurView } from "expo-blur";
 import {
   FilePlus2,
   Folder,
@@ -19,14 +20,12 @@ import {
   View,
 } from "react-native";
 
-import { Divider } from "@/components/divider";
 import { ThemedText } from "@/components/theme/text";
-import { ThemedView } from "@/components/theme/view";
-import { IconButton } from "@/components/ui/icon-button";
 import { MicroFile } from "@/domain/entities/types";
 import { iconMap } from "@/lib/svg-loader";
 import { useFileSystemStore } from "@/presentation/store/fileSystemStore";
 import { colors } from "@/styles/colors";
+import { StatusBar } from "expo-status-bar";
 
 const options = [
   { name: "Área de Trabalho", icon: "desktop-outline", route: "index" },
@@ -42,14 +41,12 @@ interface Options {
 
 function CustomDrawerContent({ navigation }: DrawerContentComponentProps) {
   const [activeTab, setActiveTab] = useState("files");
-
   const { files } = useFileSystemStore();
 
-  // @ts-ignore
   const renderFileItem = (file: MicroFile) => (
     <TouchableOpacity
       key={file.name}
-      className="flex-row items-center py-2 px-4"
+      className="mb-1 overflow-hidden rounded-lg"
       onPress={() =>
         navigation.navigate("editor/[file]", {
           file: file.name,
@@ -57,108 +54,170 @@ function CustomDrawerContent({ navigation }: DrawerContentComponentProps) {
         })
       }
     >
-      {/* @ts-ignore */}
-      <Image source={iconMap[file.name.split(".")[1]]} width={14} height={14} />
-      <ThemedText variant="body" fontWeight="semibold" className="ml-3">
-        {file.name}
-      </ThemedText>
+      <BlurView
+        intensity={60}
+        tint="systemMaterialDark"
+        className="px-3 py-2 bg-white/5"
+      >
+        <View className="flex-row items-center">
+          {/* @ts-ignore */}
+          <Image source={iconMap[file.name.split(".")[1]]} width={14} height={14} />
+          <ThemedText variant="body" fontWeight="regular" className="ml-3 text-white/95">
+            {file.name}
+          </ThemedText>
+        </View>
+      </BlurView>
     </TouchableOpacity>
   );
 
-  // @ts-ignore
   const renderOptionItem = (option: Options) => (
-    <View key={option.name}>
-      <TouchableOpacity
-        className="flex-row items-center py-3 px-4"
-        onPress={() =>
-          navigation.navigate(
-            option.route,
-            option.name === "Editor"
-              ? {
-                  file: "untitled.py",
-                  icon: "py",
-                }
-              : {},
-          )
-        }
+    <TouchableOpacity
+      key={option.name}
+      className="overflow-hidden"
+      onPress={() =>
+        navigation.navigate(
+          option.route,
+          option.name === "Editor"
+            ? {
+              file: "untitled.py",
+              icon: "py",
+            }
+            : {},
+        )
+      }
+    >
+      <BlurView
+        intensity={40}
+        tint="systemMaterialDark"
+        className="px-4 py-3 bg-white/5"
       >
-        {/* @ts-ignore */}
-        <Ionicons name={option.icon} size={24} color={colors.gray[400]} />
-        <ThemedText variant="body" className="ml-3">
-          {option.name}
-        </ThemedText>
-      </TouchableOpacity>
-      {option.route !== "editor/[file]" && <Divider />}
-    </View>
+        <View className="flex-row items-center">
+          {/* @ts-ignore */}
+          <Ionicons name={option.icon} size={20} color="rgba(255,255,255,0.9)" />
+          <ThemedText variant="body" className="ml-3 text-white/95" fontWeight="regular">
+            {option.name}
+          </ThemedText>
+        </View>
+      </BlurView>
+    </TouchableOpacity>
   );
 
   return (
-    <ThemedView className="flex-1 bg-sky-950">
-      <ThemedView className="flex-row px-0 justify-start gap-3">
-        <Pressable
-          className={`py-4 ${activeTab === "files" ? " border-blue-500" : ""}`}
-          onPress={() => setActiveTab("files")}
-        >
-          <LayoutDashboard
-            size={30}
-            color={activeTab === "files" ? colors.sky[500] : colors.gray[400]}
-          />
-        </Pressable>
-        <Pressable
-          className={`py-4 ${activeTab === "options" ? " border-blue-500" : ""}`}
-          onPress={() => setActiveTab("options")}
-        >
-          {activeTab === "files" ? (
-            <Folder size={30} color={colors.gray[400]} />
-          ) : (
-            <FolderOpen size={30} color={colors.sky[500]} />
-          )}
-        </Pressable>
-      </ThemedView>
-      <ScrollView>
-        {activeTab === "options" && (
-          <>
-            <View className="flex-row gap-3">
-              <ThemedText
-                className="uppercase text-sm mr-auto"
-                fontWeight="semibold"
+    <BlurView
+      className="flex-1"
+      intensity={50}
+      tint="dark"
+      experimentalBlurMethod="dimezisBlurView"
+    >
+      <StatusBar style="light" />
+
+      <View className="flex-1 pt-12 px-4">
+
+        <View className="mb-6 overflow-hidden rounded-2xl">
+          <BlurView
+            intensity={100}
+            tint="systemUltraThinMaterialDark"
+            className="bg-white/10"
+          >
+            <View className="flex-row p-2">
+              <Pressable
+                className={`flex-1 items-center py-3 rounded-xl overflow-hidden ${activeTab === "files" ? "" : ""
+                  }`}
+                onPress={() => setActiveTab("files")}
               >
-                arquivos
-              </ThemedText>
-              <IconButton>
-                <FilePlus2 size={20} color={colors.gray[400]} />
-              </IconButton>
-              <IconButton>
-                <FolderPlus size={20} color={colors.gray[400]} />
-              </IconButton>
-              <IconButton>
-                <Search size={20} color={colors.gray[400]} />
-              </IconButton>
-              <IconButton>
-                <RefreshCcw size={20} color={colors.gray[400]} />
-              </IconButton>
+                <LayoutDashboard
+                  size={24}
+                  color={activeTab === "files" ? "#ffffff" : "rgba(255,255,255,0.7)"}
+                />
+              </Pressable>
+
+              <Pressable
+                className={`flex-1 items-center py-3 rounded-xl overflow-hidden ${activeTab === "options" ? "" : ""
+                  }`}
+                onPress={() => setActiveTab("options")}
+              >
+                {activeTab === "options" ? (
+                  <FolderOpen size={24} color="#ffffff" />
+                ) : (
+                  <Folder size={24} color="rgba(255,255,255,0.7)" />
+                )}
+              </Pressable>
             </View>
-            {files.map(renderFileItem)}
-          </>
-        )}
-        {activeTab === "files" && (
-          <>
-            <ThemedText
-              className="uppercase text-sm mb-3"
-              fontWeight="semibold"
-            >
-              navegação
-            </ThemedText>
-            <ThemedView
-              style={{ padding: 0 }}
-              className="border border-3 border-gray-400 p-0 rounded-lg"
-            >
-              {options.map(renderOptionItem)}
-            </ThemedView>
-          </>
-        )}
-      </ScrollView>
-    </ThemedView>
+          </BlurView>
+        </View>
+
+        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+
+          {activeTab === "options" && (
+            <>
+              <View className="mb-4 overflow-hidden rounded-xl">
+                <BlurView
+                  intensity={120}
+                  tint="systemThinMaterialDark"
+                >
+                  <View className="flex-row items-center px-4 py-3">
+                    <ThemedText className="uppercase text-xs mr-auto font-bold text-white/90 tracking-widest">
+                      arquivos
+                    </ThemedText>
+                    <View className="flex-row gap-3">
+                      <View className="overflow-hidden rounded-lg">
+                        <BlurView intensity={60} className="p-1.5 bg-white/10">
+                          <FilePlus2 size={14} color="rgba(255,255,255,0.9)" />
+                        </BlurView>
+                      </View>
+                      <View className="overflow-hidden rounded-lg">
+                        <BlurView intensity={60} className="p-1.5 bg-white/10">
+                          <FolderPlus size={14} color="rgba(255,255,255,0.9)" />
+                        </BlurView>
+                      </View>
+                      <View className="overflow-hidden rounded-lg">
+                        <BlurView intensity={60} className="p-1.5 bg-white/10">
+                          <Search size={14} color="rgba(255,255,255,0.9)" />
+                        </BlurView>
+                      </View>
+                      <View className="overflow-hidden rounded-lg">
+                        <BlurView intensity={60} className="p-1.5 bg-white/10">
+                          <RefreshCcw size={14} color="rgba(255,255,255,0.9)" />
+                        </BlurView>
+                      </View>
+                    </View>
+                  </View>
+                </BlurView>
+              </View>
+
+              <View className="gap-1">
+                {files.map(renderFileItem)}
+              </View>
+            </>
+          )}
+
+          {activeTab === "files" && (
+            <>
+              <ThemedText className="uppercase text-xs mb-4 font-bold text-white/90 tracking-widest px-2">
+                navegação
+              </ThemedText>
+
+              <View className="overflow-hidden rounded-2xl mb-6">
+                <BlurView
+                  intensity={120}
+                  tint="systemThinMaterialDark"
+                >
+                  {options.map((option, index) => (
+                    <View key={option.name}>
+                      {renderOptionItem(option)}
+                      {index < options.length - 1 && (
+                        <View className="h-px bg-white/10 mx-4" />
+                      )}
+                    </View>
+                  ))}
+                </BlurView>
+              </View>
+            </>
+          )}
+
+        </ScrollView>
+      </View>
+    </BlurView>
   );
 }
 
@@ -168,11 +227,12 @@ export default function DrawerLayout() {
       drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
         headerStyle: {
-          backgroundColor: colors.sky[950],
+          backgroundColor: colors.black.DEFAULT,
         },
         headerTintColor: "#f0f9ff",
         drawerStyle: {
-          backgroundColor: "#082f49",
+          backgroundColor: "transparent",
+          width: 280,
         },
       }}
     >
@@ -206,7 +266,7 @@ export default function DrawerLayout() {
 
 function HeadTitle({ title }: { title: string }) {
   return (
-    <ThemedText fontWeight="semibold" className="uppercase">
+    <ThemedText fontWeight="semibold" className="uppercase text-white">
       {title}
     </ThemedText>
   );

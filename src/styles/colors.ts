@@ -1,4 +1,21 @@
 export const colors = {
+  pink: {
+    500: "#BB163E"
+  },
+
+  blue: {
+    200: "#1CA4EE",
+    600: "#0652D4",
+  },
+
+  black: {
+    DEFAULT: "#040404"
+  },
+
+  white: {
+    DEFAULT: "#EDFEFF"
+  },
+
   sky: {
     950: "#091018",
     900: "#121E2E",

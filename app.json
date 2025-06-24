@@ -1,14 +1,9 @@
 {
   "expo": {
     "name": "PiDevKit IDE",
-    "slug": "pidevkit-repl",
+    "slug": "pidevkit",
     "version": "1.0.0",
-    "scheme": "pidevkit-repl",
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/favicon.png"
-    },
+    "scheme": "pidevkit",
     "plugins": [
       "expo-router"
     ],
@@ -17,12 +12,12 @@
       "tsconfigPaths": true
     },
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#121E2E"
+      "backgroundColor": "#040404"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -33,8 +28,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#121E2E"
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#040404"
       },
       "package": "com.pidevkit.ide"
     },
