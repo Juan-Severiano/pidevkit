@@ -12,10 +12,6 @@ export const colors = {
     DEFAULT: "#040404"
   },
 
-  white: {
-    DEFAULT: "#EDFEFF"
-  },
-
   sky: {
     950: "#091018",
     900: "#121E2E",

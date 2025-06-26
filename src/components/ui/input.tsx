@@ -30,6 +30,9 @@ function Input({
         {
           "h-14 px-4 rounded-lg border border-gray-400": variant !== "primary",
         },
+        {
+          "bg-white/5 h-10 px-4 rounded-lg": variant === "primary",
+        },
         { "bg-sky-900": variant === "secondary" },
         { "bg-gray-900": variant === "tertiary" },
         className,

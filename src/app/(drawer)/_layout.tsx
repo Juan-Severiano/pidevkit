@@ -8,6 +8,7 @@ import {
   FolderOpen,
   FolderPlus,
   LayoutDashboard,
+  Navigation,
   RefreshCcw,
   Search,
 } from "lucide-react-native";
@@ -56,7 +57,7 @@ function CustomDrawerContent({ navigation }: DrawerContentComponentProps) {
     >
       <BlurView
         intensity={60}
-        tint="systemMaterialDark"
+        tint="dark"
         className="px-3 py-2 bg-white/5"
       >
         <View className="flex-row items-center">
@@ -88,8 +89,8 @@ function CustomDrawerContent({ navigation }: DrawerContentComponentProps) {
     >
       <BlurView
         intensity={40}
-        tint="systemMaterialDark"
-        className="px-4 py-3 bg-white/5"
+        tint="dark"
+        className="px-4 py-3 bg-black/5"
       >
         <View className="flex-row items-center">
           {/* @ts-ignore */}
@@ -116,7 +117,7 @@ function CustomDrawerContent({ navigation }: DrawerContentComponentProps) {
         <View className="mb-6 overflow-hidden rounded-2xl">
           <BlurView
             intensity={100}
-            tint="systemUltraThinMaterialDark"
+            tint="dark"
             className="bg-white/10"
           >
             <View className="flex-row p-2">
@@ -153,7 +154,7 @@ function CustomDrawerContent({ navigation }: DrawerContentComponentProps) {
               <View className="mb-4 overflow-hidden rounded-xl">
                 <BlurView
                   intensity={120}
-                  tint="systemThinMaterialDark"
+                  tint="dark"
                 >
                   <View className="flex-row items-center px-4 py-3">
                     <ThemedText className="uppercase text-xs mr-auto font-bold text-white/90 tracking-widest">
@@ -193,14 +194,17 @@ function CustomDrawerContent({ navigation }: DrawerContentComponentProps) {
 
           {activeTab === "files" && (
             <>
-              <ThemedText className="uppercase text-xs mb-4 font-bold text-white/90 tracking-widest px-2">
-                navegação
-              </ThemedText>
+              <View className="flex-row gap-2">
+                <Navigation size={16} color="white"  />
+                <ThemedText className="uppercase text-xs mb-4 font-bold text-white tracking-widest px-2">
+                  navegação
+                </ThemedText>
+              </View>
 
               <View className="overflow-hidden rounded-2xl mb-6">
                 <BlurView
                   intensity={120}
-                  tint="systemThinMaterialDark"
+                  tint="dark"
                 >
                   {options.map((option, index) => (
                     <View key={option.name}>
